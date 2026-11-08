@@ -1,0 +1,21 @@
+demo-app/
+
+# Dependencies
+node_modules/
+server/node_modules/
+client/node_modules/
+
+# Environment variables & secrets
+.env
+server/.env
+client/.env
+
+# Build outputs & logs
+client/build/
+client/dist/
+client/install/
+server/build/
+server/dist/
+server/install/
+log/
+*.log
