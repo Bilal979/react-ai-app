@@ -14,8 +14,10 @@ client/.env
 client/build/
 client/dist/
 client/install/
+client/public/
 server/build/
 server/dist/
 server/install/
+server/public/
 log/
 *.log

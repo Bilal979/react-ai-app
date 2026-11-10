@@ -1,4 +1,5 @@
 import pkg from "pg";
+import dotenv from "dotenv/config";
 
 const { Pool } = pkg;
 interface PokAImon {
@@ -10,10 +11,12 @@ interface PokAImon {
     image_url: string,
     doodle_source: string,
     like_count: number,
-    action_images: Record<string, any>
+    action_images?: Record<string, any>
 }
 
-type InsertPokAImon = Omit<PokAImon, 'id' | 'like_count'>;
+export type InsertPokAImon = Omit<PokAImon, 'id' | 'like_count'>;
+
+const dbURLPolled = process.env.DATABASE_URL_POOLED || process.env.DATABASE_URL || '';
 
 class Database {
     url: string;
@@ -111,4 +114,6 @@ class Database {
 
 }
 
+const db = new Database({ url: dbURLPolled });
+export { db };
 export default Database;
