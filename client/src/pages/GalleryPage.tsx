@@ -15,6 +15,23 @@ const GalleryPage = () => {
 
     const availableTypes = useMemo(() => new Set(data.map(elem => elem.type).filter(Boolean)), [data]);
 
+    const processedData = useMemo(() => {
+        let result = [...data];
+
+        if (filterType != 'all') {
+            result = result.filter(elem => elem.type && elem.type.toLocaleLowerCase() === filterType.toLocaleLowerCase());
+        }
+
+        if (sortBy === 'likes') {
+            result.sort((a, b) => (b.like_count || 0) - (a.like_count || 0))
+        } else if (sortBy === 'name') {
+            result.sort((a, b) => a.name.localeCompare(b.name))
+        }
+        return result;
+    }, [data, sortBy, filterType])
+
+
+
     const like = async (id: string) => {
         try {
             setLikeLoading(true);
@@ -49,7 +66,44 @@ const GalleryPage = () => {
                 </h2>
 
                 {/* ⏸️ WORKSHOP STEP 6: Add Sort and Filter Controls */}
-                {/* TODO: Add select dropdowns for sorting and filtering */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                    {/* Sort Dropdown */}
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Sort:
+                        </label>
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        >
+                            <option value="newest">Newest</option>
+                            <option value="likes">Most Liked</option>
+                            <option value="name">Name</option>
+                        </select>
+                    </div>
+
+                    {/* Filter Dropdown */}
+                    {availableTypes.size > 0 && (
+                        <div className="flex items-center gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Type:
+                            </label>
+                            <select
+                                value={filterType}
+                                onChange={(e) => setFilterType(e.target.value)}
+                                className="px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                                <option value="all">All Types</option>
+                                {Array.from(availableTypes).map((type) => type && (
+                                    <option key={type} value={type}>
+                                        {type}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {data.length === 0 ? (
@@ -58,7 +112,7 @@ const GalleryPage = () => {
                 </p>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {data.map((pokemon) => (
+                    {processedData.map((pokemon) => (
                         <div
                             key={pokemon.id}
                             className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 flex flex-col justify-between transition-colors border border-gray-100 dark:border-gray-700"
